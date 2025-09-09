@@ -5,15 +5,18 @@ import os
 import secrets
 from dotenv import load_dotenv
 
-# Load variables from .env
+# Load variables from .env (for local dev)
 load_dotenv()
 
 app = Flask(__name__)
+
+# Secret key for Flask sessions (random if not set)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(16)
 
-# Create OpenAI client (new syntax)
+# OpenAI client
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Load restaurant menu data dynamically based on URL parameter
 def load_menu_data(restaurant_name):
     filename = f"{restaurant_name}.json"
     try:
@@ -85,6 +88,10 @@ Menu data: {json.dumps(menu_data['menu_items'])}
 def clear():
     session.pop("history", None)
     return jsonify({"status": "cleared"})
+
+@app.route("/healthz")
+def healthz():
+    return "ok", 200
 
 if __name__ == "__main__":
     app.run(debug=True)
