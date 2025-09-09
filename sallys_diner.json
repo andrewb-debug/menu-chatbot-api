@@ -1,0 +1,24 @@
+{
+  "restaurant_name": "Sally's Diner",
+  "cuisine_type": "American",
+  "menu_items": [
+    {
+      "name": "Pancake Stack",
+      "description": "Fluffy pancakes served with maple syrup and butter",
+      "ingredients": ["flour", "milk", "eggs", "butter", "maple syrup"],
+      "allergens": ["dairy", "eggs", "gluten"]
+    },
+    {
+      "name": "Bacon Cheeseburger",
+      "description": "Beef patty with cheddar cheese, lettuce, tomato, and bacon",
+      "ingredients": ["beef", "cheddar cheese", "bacon", "lettuce", "tomato", "bun"],
+      "allergens": ["dairy", "gluten"]
+    },
+    {
+      "name": "Garden Salad",
+      "description": "Mixed greens with tomatoes, cucumbers, and vinaigrette",
+      "ingredients": ["lettuce", "tomato", "cucumber", "vinaigrette"],
+      "allergens": []
+    }
+  ]
+}

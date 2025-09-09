@@ -1,0 +1,36 @@
+{
+  "restaurant_name": "Joe's Grill",
+  "cuisine_type": "American Grill",
+  "menu_items": [
+    {
+      "name": "Caesar Salad",
+      "ingredients": ["romaine lettuce", "croutons", "parmesan cheese", "caesar dressing"],
+      "dietary_info": {
+        "contains_dairy": true,
+        "contains_gluten": true,
+        "vegetarian": true,
+        "vegan": false
+      }
+    },
+    {
+      "name": "Grilled Salmon",
+      "ingredients": ["salmon", "lemon butter sauce", "asparagus"],
+      "dietary_info": {
+        "contains_dairy": true,
+        "contains_gluten": false,
+        "vegetarian": false,
+        "vegan": false
+      }
+    },
+    {
+      "name": "Veggie Burger",
+      "ingredients": ["black bean patty", "lettuce", "tomato", "vegan bun"],
+      "dietary_info": {
+        "contains_dairy": false,
+        "contains_gluten": true,
+        "vegetarian": true,
+        "vegan": true
+      }
+    }
+  ]
+}

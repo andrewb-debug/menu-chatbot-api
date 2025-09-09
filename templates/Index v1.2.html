@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ restaurant_name }} Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+        .chat-container { max-width: 600px; margin: 50px auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; height: 80vh; }
+        .chat-box { flex: 1; padding: 20px; overflow-y: auto; }
+        .input-box { display: flex; border-top: 1px solid #ddd; }
+        input { flex: 1; padding: 15px; border: none; font-size: 16px; }
+        button { padding: 15px 20px; border: none; background: #007BFF; color: white; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .message { margin-bottom: 15px; }
+        .user { text-align: right; }
+        .assistant { text-align: left; color: #333; }
+        .message p { display: inline-block; padding: 10px 15px; border-radius: 20px; max-width: 80%; }
+        .user p { background: #007BFF; color: white; }
+        .assistant p { background: #eee; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+        <div class="input-box">
+            <input type="text" id="user-input" placeholder="Type your message..." onkeypress="checkEnter(event)">
+            <button onclick="sendMessage()">Ask</button>
+        </div>
+    </div>
+
+    <script>
+        const restaurant = "{{ restaurant_name }}";
+        const chatBox = document.getElementById("chat-box");
+        const inputBox = document.getElementById("user-input");
+
+        function appendMessage(sender, text) {
+            const div = document.createElement("div");
+            div.classList.add("message", sender.toLowerCase());
+            div.innerHTML = `<p><strong>${sender}:</strong> ${text}</p>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userMessage = inputBox.value;
+            if (!userMessage) return;
+            appendMessage("You", userMessage);
+            inputBox.value = "";
+
+            try {
+                const response = await fetch("/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMessage, restaurant: restaurant })
+                });
+                const data = await response.json();
+                appendMessage("Bot", data.reply);
+            } catch (err) {
+                appendMessage("Bot", "Error contacting server.");
+            }
+        }
+
+        function checkEnter(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
