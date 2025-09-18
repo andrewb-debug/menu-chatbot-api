@@ -9,22 +9,25 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-
-# Secret key for Flask sessions (random per restart if not provided)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(16)
-
-# OpenAI client (modern SDK)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Base directory for absolute paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+# ---- Lazy OpenAI client (prevents startup crash) ----
+_client = None
+def get_openai_client():
+    global _client
+    if _client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            # Don't crash the process; return a clear error later
+            raise RuntimeError("Missing OPENAI_API_KEY environment variable.")
+        _client = OpenAI(api_key=api_key)
+    return _client
+
 # -------- Menu loading --------
 def load_menu_data(restaurant_name: str):
-    """
-    Load menu JSON from /menus/<slug>.json using an absolute path.
-    Returns dict or None if not found/invalid.
-    """
     path = os.path.join(BASE_DIR, "menus", f"{restaurant_name}.json")
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -85,12 +88,11 @@ Rules:
 """
 
     messages = [{"role": "system", "content": system_prompt}]
-    # Add prior turns
     messages.extend(session["history"])
-    # Add current user message
     messages.append({"role": "user", "content": user_input})
 
     try:
+        client = get_openai_client()
         resp = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=messages,
@@ -99,6 +101,9 @@ Rules:
             max_tokens=350,
         )
         reply = resp.choices[0].message.content
+    except RuntimeError as e:
+        # Missing OPENAI_API_KEY or similar non-fatal setup error
+        reply = f"Server configuration error: {str(e)}"
     except Exception as e:
         reply = f"Error contacting OpenAI API: {str(e)}"
 
@@ -116,6 +121,7 @@ def clear():
 
 @app.route("/healthz")
 def healthz():
+    # Avoid touching OpenAI or menus here so health checks always pass when Flask is up
     return "ok", 200
 
 if __name__ == "__main__":
