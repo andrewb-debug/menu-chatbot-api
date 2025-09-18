@@ -5,28 +5,27 @@ import os
 import secrets
 from dotenv import load_dotenv
 
-# Load variables from .env for local dev; in production, Render provides env vars
+# Load variables from .env for local dev; in production (Render) they come from env
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(16)
 
-# Base directory for absolute paths
+# Absolute base path for reading menus
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ---- Lazy OpenAI client (prevents startup crash) ----
+# ------- Lazy OpenAI client so startup never crashes -------
 _client = None
 def get_openai_client():
     global _client
     if _client is None:
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key:
-            # Don't crash the process; return a clear error later
             raise RuntimeError("Missing OPENAI_API_KEY environment variable.")
         _client = OpenAI(api_key=api_key)
     return _client
 
-# -------- Menu loading --------
+# ------- Menu loading from /menus/<slug>.json -------
 def load_menu_data(restaurant_name: str):
     path = os.path.join(BASE_DIR, "menus", f"{restaurant_name}.json")
     try:
@@ -37,7 +36,7 @@ def load_menu_data(restaurant_name: str):
     except json.JSONDecodeError:
         return {"error": f"Menu file for '{restaurant_name}' is not valid JSON."}
 
-# -------- Routes --------
+# ------- Routes -------
 @app.route("/")
 def index():
     restaurant_name = request.args.get("restaurant")
@@ -70,15 +69,19 @@ def chat():
     if "history" not in session:
         session["history"] = []
 
-    # Build system prompt
+    # ------- System prompt with formatting rules (Markdown lists) -------
     system_prompt = f"""
 You are the official menu assistant for {menu_data.get('restaurant_name', restaurant_name)}.
 Use ONLY the provided menu JSON to answer questions about items, ingredients, allergens, prices, and dietary tags.
-If the user asks about an item not in the JSON, say it's not on this menu and suggest close matches from the menu.
-If the question is ambiguous, ask one brief clarifying question.
+
+Formatting rules:
+- If listing multiple items, respond as a numbered or bulleted **Markdown** list.
+- Each list item must be: **Item Name** — short description (or key details).
+- For single-item details, use short paragraphs or a compact bullet list.
+- Keep responses concise and easy to skim.
 
 Menu JSON (authoritative source):
-{json.dumps(menu_data.get('menu_items', []))}
+{json.dumps(menu_data.get('menu_items', []), ensure_ascii=False)}
 
 Rules:
 - Never invent menu items or details not present in the JSON.
@@ -88,7 +91,9 @@ Rules:
 """
 
     messages = [{"role": "system", "content": system_prompt}]
+    # Add prior turns
     messages.extend(session["history"])
+    # Add current user message
     messages.append({"role": "user", "content": user_input})
 
     try:
@@ -102,7 +107,6 @@ Rules:
         )
         reply = resp.choices[0].message.content
     except RuntimeError as e:
-        # Missing OPENAI_API_KEY or similar non-fatal setup error
         reply = f"Server configuration error: {str(e)}"
     except Exception as e:
         reply = f"Error contacting OpenAI API: {str(e)}"
@@ -121,7 +125,6 @@ def clear():
 
 @app.route("/healthz")
 def healthz():
-    # Avoid touching OpenAI or menus here so health checks always pass when Flask is up
     return "ok", 200
 
 if __name__ == "__main__":

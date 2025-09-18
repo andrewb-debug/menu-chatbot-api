@@ -1,193 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Restaurant Menu Chatbot</title>
+  <meta charset="UTF-8" />
+  <title>Menu Chat — {{ restaurant_name }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #111;
+      --muted: #666;
+      --accent: #2563eb;
+      --border: #e5e5e5;
     }
-    .chat-container {
-      width: 100%;
-      max-width: 500px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 24px 16px 32px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
       overflow: hidden;
     }
-    .chat-header {
-      background: #4CAF50;
-      color: white;
-      padding: 16px;
-      font-size: 18px;
-      text-align: center;
-      font-weight: bold;
+    .header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .chat-box {
-      flex: 1;
-      padding: 16px;
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #16a34a; }
+    .title {
+      font-weight: 700; font-size: 18px;
+    }
+    .chat {
+      height: 60vh;
       overflow-y: auto;
-      max-height: 400px;
+      padding: 18px 20px;
+      scroll-behavior: smooth;
     }
-    .chat-message {
-      margin-bottom: 12px;
-      animation: fadeIn 0.3s ease-in-out;
+    .msg {
+      margin: 12px 0;
+      line-height: 1.5;
     }
-    .chat-message.user {
-      text-align: right;
-    }
-    .chat-message.bot {
-      text-align: left;
-    }
-    .chat-message span {
+    .msg.user { text-align: right; }
+    .bubble {
       display: inline-block;
-      padding: 10px 14px;
-      border-radius: 16px;
-      max-width: 75%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      max-width: 85%;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
-    .chat-message.user span {
-      background: #DCF8C6;
+    .msg.user .bubble {
+      background: #eef2ff;
+      border-color: #dbeafe;
     }
-    .chat-message.bot span {
-      background: #f1f0f0;
-    }
-    .chat-input-container {
+    .input-row {
       display: flex;
-      border-top: 1px solid #ddd;
+      gap: 10px;
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      background: #fff;
     }
-    .chat-input-container input {
+    .input-row input {
       flex: 1;
-      border: none;
-      padding: 14px;
-      font-size: 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 15px;
     }
-    .chat-input-container button {
-      background: #4CAF50;
-      border: none;
-      color: white;
-      padding: 14px 20px;
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: 0;
+      padding: 10px 14px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 16px;
+      font-weight: 600;
     }
-    .chat-input-container button:hover {
-      background: #45a049;
-    }
-    .chat-footer {
-      display: flex;
-      justify-content: center;
-      padding: 10px;
-      background: #fafafa;
-      border-top: 1px solid #ddd;
-    }
-    .chat-footer button {
-      background: #f44336;
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-    .chat-footer button:hover {
-      background: #d32f2f;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Render Markdown lists nicely inside bot bubbles */
+    .bubble ul, .bubble ol { margin: 0.25rem 0 0.25rem 1.25rem; }
+    .bubble li { margin: 0.25rem 0; }
+    .bubble p { margin: 0.4rem 0; }
+
+    /* helper text */
+    .hint { color: var(--muted); font-size: 13px; margin-top: 6px; }
   </style>
+
+  <!-- Markdown parser for pretty lists -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-header" id="chatHeader">Menu Assistant</div>
-    <div class="chat-box" id="chatBox"></div>
-    <div class="chat-input-container">
-      <input type="text" id="userInput" placeholder="Ask about the menu...">
-      <button onclick="sendMessage()">Ask</button>
-    </div>
-    <div class="chat-footer">
-      <button onclick="clearChat()">Clear Chat</button>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <span class="dot"></span>
+        <div class="title">Menu Chat — {{ restaurant_name }}</div>
+      </div>
+
+      <div id="chatBox" class="chat"></div>
+
+      <div class="input-row">
+        <input id="userInput" type="text" placeholder="Ask about items, allergens, prices…" />
+        <button id="sendBtn" class="btn">Send</button>
+      </div>
+      <div class="hint" style="padding: 0 12px 12px;">
+        Tip: Try “What sandwiches do you have?” or “Allergens in the Spicy Chicken Sandwich?”
+      </div>
     </div>
   </div>
 
   <script>
+    const restaurant = "{{ restaurant_name }}";
     const chatBox = document.getElementById("chatBox");
     const userInput = document.getElementById("userInput");
-    const chatHeader = document.getElementById("chatHeader");
+    const sendBtn = document.getElementById("sendBtn");
 
-    // Format restaurant name (e.g., joes_grill -> Joe's Grill)
-    function formatRestaurantName(name) {
-      return name.replace(/_/g, " ")
-                 .replace(/\b\w/g, c => c.toUpperCase());
-    }
+    // Initial bot message
+    appendMessage("bot",
+`👋 Hi, I’m your assistant for **${restaurant}**!
+Ask me about items, allergens, prices, or dietary options.`);
 
-    // Get restaurant from URL params
-    const params = new URLSearchParams(window.location.search);
-    const restaurant = params.get("restaurant") || "joes_grill";
-    const formattedRestaurant = formatRestaurantName(restaurant);
-
-    // Set header dynamically
-    chatHeader.textContent = `${formattedRestaurant} Assistant`;
-
-    function appendMessage(message, sender) {
-      const messageElement = document.createElement("div");
-      messageElement.classList.add("chat-message", sender);
-      messageElement.innerHTML = `<span>${message}</span>`;
-      chatBox.appendChild(messageElement);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
 
     async function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-
-      appendMessage(message, "user");
+      const text = userInput.value.trim();
+      if (!text) return;
+      appendMessage("user", text);
       userInput.value = "";
+      setLoading(true);
 
       try {
-        const response = await fetch(`/chat?restaurant=${restaurant}`, {
+        const res = await fetch(`/chat?restaurant=${encodeURIComponent(restaurant)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message })
+          body: JSON.stringify({ message: text })
         });
-        const data = await response.json();
-        appendMessage(data.reply, "bot");
-      } catch (error) {
-        appendMessage("Error: Could not connect to server.", "bot");
+        const data = await res.json();
+        const reply = data.reply || "Sorry, I didn’t get a reply.";
+        appendMessage("bot", reply, /*isMarkdown*/ true);
+      } catch (err) {
+        appendMessage("bot", "Network error. Please try again.", false);
+      } finally {
+        setLoading(false);
       }
     }
 
-    async function clearChat() {
-      try {
-        const response = await fetch(`/clear?restaurant=${restaurant}`, {
-          method: "POST"
-        });
-        await response.json();
-        chatBox.innerHTML = ""; // wipe messages
-        appendMessage(`👋 Hi, I’m your assistant for ${formattedRestaurant}! Ask me about the menu.`, "bot");
-      } catch (error) {
-        appendMessage("Error clearing chat.", "bot");
-      }
+    function setLoading(state) {
+      sendBtn.disabled = state;
+      sendBtn.textContent = state ? "Sending…" : "Send";
     }
 
-    // Auto show welcome message on load
-    appendMessage(`👋 Hi, I’m your assistant for ${formattedRestaurant}! Ask me about the menu.`, "bot");
-
-    // Send message on Enter key
-    userInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        sendMessage();
+    function appendMessage(sender, text, isMarkdown = false) {
+      const wrap = document.createElement("div");
+      wrap.className = `msg ${sender}`;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      if (sender === "bot" && isMarkdown) {
+        bubble.innerHTML = marked.parse(text);
+      } else {
+        bubble.textContent = text;
       }
-    });
+      wrap.appendChild(bubble);
+      chatBox.appendChild(wrap);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
   </script>
 </body>
 </html>
