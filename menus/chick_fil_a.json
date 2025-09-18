@@ -1,0 +1,347 @@
+{
+  "restaurant_name": "Chick-fil-A (Demo)",
+  "slug": "chick_fil_a",
+  "currency": "USD",
+  "sections": [
+    { "name": "Entrées", "description": "Chicken sandwiches and nuggets" },
+    { "name": "Salads", "description": "Freshly prepared salads" },
+    { "name": "Sides", "description": "Classics and shareables" },
+    { "name": "Breakfast", "description": "Served until 10:30am" },
+    { "name": "Kids Meals", "description": "Smaller portions" },
+    { "name": "Beverages", "description": "Lemonade, tea, and more" },
+    { "name": "Sauces", "description": "Dipping sauces" },
+    { "name": "Desserts", "description": "Sweet treats" }
+  ],
+  "policies": {
+    "cross_contact": "Products are handcrafted; cross-contact may occur. Items may vary by location.",
+    "dietary_tags_supported": ["gluten_free","vegetarian","vegan","dairy_free","nut_free","alcohol_free"],
+    "spice_scale": "none|mild|medium|hot",
+    "tax_included": false,
+    "service_fee": null,
+    "oil_note": "Chicken is cooked in 100% refined peanut oil; according to FDA, highly refined oils are not considered major allergens.",
+    "disclaimer": "Information is for demo purposes only; verify nutrition and allergens with the restaurant."
+  },
+  "menu_items": [
+    {
+      "id": "chicken_sandwich",
+      "name": "Chick-fil-A Chicken Sandwich",
+      "section": "Entrées",
+      "description": "Breaded chicken breast, toasted buttery bun, dill pickle chips.",
+      "prices": [{ "unit": "base", "amount": 5.49 }],
+      "ingredients": ["chicken breast","seasoning","breaded coating","refined peanut oil (cooking)","bun","butter","dill pickles"],
+      "allergens": ["wheat","milk"], 
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [
+        {
+          "group": "Bun Options",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "Toasted Buttery Bun", "price_delta": 0 },
+            { "name": "Multigrain Brioche", "price_delta": 0.30 }
+          ]
+        },
+        {
+          "group": "Add Cheese",
+          "type": "single",
+          "required": false,
+          "options": [
+            { "name": "American", "price_delta": 0.50 },
+            { "name": "Colby Jack", "price_delta": 0.70 }
+          ]
+        }
+      ],
+      "add_ons": [
+        { "name": "Bacon", "price_delta": 1.20 }
+      ],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 420,
+      "image": null,
+      "notes": "Cooked in refined peanut oil; verify allergens locally."
+    },
+    {
+      "id": "spicy_chicken_sandwich",
+      "name": "Spicy Chicken Sandwich",
+      "section": "Entrées",
+      "description": "Spicy seasoned breaded chicken on toasted bun with dill pickles.",
+      "prices": [{ "unit": "base", "amount": 5.79 }],
+      "ingredients": ["chicken breast","spicy seasoning","breaded coating","refined peanut oil (cooking)","bun","butter","dill pickles"],
+      "allergens": ["wheat","milk"],
+      "dietary_tags": [],
+      "spice": "medium",
+      "modifiers": [
+        {
+          "group": "Bun Options",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "Toasted Buttery Bun", "price_delta": 0 },
+            { "name": "Multigrain Brioche", "price_delta": 0.30 }
+          ]
+        }
+      ],
+      "add_ons": [{ "name": "Pepper Jack Cheese", "price_delta": 0.70 }],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 450,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "nuggets_8ct",
+      "name": "Chick-fil-A Nuggets (8 ct)",
+      "section": "Entrées",
+      "description": "Bite-size breaded chicken nuggets.",
+      "prices": [{ "unit": "base", "amount": 4.99 }],
+      "ingredients": ["chicken breast","seasoning","breaded coating","refined peanut oil (cooking)"],
+      "allergens": ["wheat","milk"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 270,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "grilled_nuggets_8ct",
+      "name": "Grilled Nuggets (8 ct)",
+      "section": "Entrées",
+      "description": "Marinated, grilled chicken nuggets.",
+      "prices": [{ "unit": "base", "amount": 5.69 }],
+      "ingredients": ["chicken breast","marinade","spices"],
+      "allergens": [],
+      "dietary_tags": ["gluten_free","dairy_free"],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 130,
+      "image": null,
+      "notes": "Chick-fil-A states dairy was removed from Grilled Nuggets; verify on site for current info."
+    },
+    {
+      "id": "cobb_salad_nuggets",
+      "name": "Cobb Salad (with Nuggets)",
+      "section": "Salads",
+      "description": "Breaded nuggets over mixed greens, roasted corn, cheeses, bacon, egg, grape tomatoes; served with charred tomato & crispy red bell pepper topping.",
+      "prices": [{ "unit": "base", "amount": 9.99 }],
+      "ingredients": ["mixed greens","breaded chicken nuggets","roasted corn","Monterey Jack","Cheddar","bacon","egg","grape tomatoes","red bell pepper topping"],
+      "allergens": ["milk","egg","wheat"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [
+        {
+          "group": "Protein Option",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "Breaded Nuggets", "price_delta": 0 },
+            { "name": "Grilled Nuggets", "price_delta": 0.50 },
+            { "name": "Spicy Grilled Filet (Cold)", "price_delta": 0.80 }
+          ]
+        },
+        {
+          "group": "Dressing",
+          "type": "single",
+          "required": false,
+          "options": [
+            { "name": "Avocado Lime Ranch", "price_delta": 0 },
+            { "name": "Light Italian", "price_delta": 0 },
+            { "name": "Garden Herb Ranch", "price_delta": 0 }
+          ]
+        }
+      ],
+      "add_ons": [{ "name": "Extra Nugget Protein", "price_delta": 1.50 }],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 690,
+      "image": null,
+      "notes": "Allergen profile varies with protein/dressing choice."
+    },
+    {
+      "id": "waffle_potato_fries_md",
+      "name": "Waffle Potato Fries (Medium)",
+      "section": "Sides",
+      "description": "Waffle-cut potatoes cooked in canola oil, sprinkled with sea salt.",
+      "prices": [{ "unit": "base", "amount": 2.79 }],
+      "ingredients": ["potatoes","canola oil","sea salt"],
+      "allergens": [],
+      "dietary_tags": ["vegetarian","vegan","dairy_free","nut_free"],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 420,
+      "image": null,
+      "notes": "Verify preparation oil by location."
+    },
+    {
+      "id": "mac_and_cheese_md",
+      "name": "Mac & Cheese (Medium)",
+      "section": "Sides",
+      "description": "Macaroni in a special blend of cheeses, baked to form a crispy top layer.",
+      "prices": [{ "unit": "base", "amount": 3.99 }],
+      "ingredients": ["wheat pasta","cheese blend","milk","butter"],
+      "allergens": ["milk","wheat"],
+      "dietary_tags": ["vegetarian"],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 450,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "chicken_biscuit",
+      "name": "Chicken Biscuit",
+      "section": "Breakfast",
+      "description": "Breaded chicken on a warm, buttermilk biscuit.",
+      "prices": [{ "unit": "base", "amount": 3.89 }],
+      "ingredients": ["chicken breast","seasoning","breaded coating","biscuit","butter"],
+      "allergens": ["wheat","milk"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "Breakfast hours only" },
+      "calories": 460,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "kids_nuggets_5ct",
+      "name": "Kids’ Nuggets (5 ct)",
+      "section": "Kids Meals",
+      "description": "Kids portion of breaded nuggets. Includes kid’s side and drink.",
+      "prices": [{ "unit": "base", "amount": 5.49 }],
+      "ingredients": ["chicken breast","seasoning","breaded coating","refined peanut oil (cooking)"],
+      "allergens": ["wheat","milk"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [
+        {
+          "group": "Kids Side",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "Waffle Potato Fries", "price_delta": 0 },
+            { "name": "Fruit Cup", "price_delta": 0.50 },
+            { "name": "Mac & Cheese", "price_delta": 0.75 }
+          ]
+        },
+        {
+          "group": "Kids Drink",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "1% Milk", "price_delta": 0 },
+            { "name": "Apple Juice", "price_delta": 0 },
+            { "name": "Lemonade (Kids)", "price_delta": 0.25 }
+          ]
+        }
+      ],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 160,
+      "image": null,
+      "notes": "Calories vary by sides and drink."
+    },
+    {
+      "id": "fresh_squeezed_lemonade_md",
+      "name": "Freshly-Squeezed Lemonade (Medium)",
+      "section": "Beverages",
+      "description": "Handcrafted lemonade made from lemon juice, water, and sugar.",
+      "prices": [{ "unit": "base", "amount": 2.59 }],
+      "ingredients": ["lemon juice","water","sugar"],
+      "allergens": [],
+      "dietary_tags": ["vegetarian","vegan","dairy_free","nut_free","alcohol_free"],
+      "spice": null,
+      "modifiers": [
+        {
+          "group": "Sweetness",
+          "type": "single",
+          "required": true,
+          "options": [
+            { "name": "Regular", "price_delta": 0 },
+            { "name": "Diet", "price_delta": 0 }
+          ]
+        }
+      ],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 230,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "sweet_tea_md",
+      "name": "Sweet Tea (Medium)",
+      "section": "Beverages",
+      "description": "Freshly-brewed black tea sweetened with sugar.",
+      "prices": [{ "unit": "base", "amount": 1.99 }],
+      "ingredients": ["brewed black tea","water","sugar"],
+      "allergens": [],
+      "dietary_tags": ["vegetarian","vegan","dairy_free","nut_free","alcohol_free"],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 180,
+      "image": null,
+      "notes": ""
+    },
+    {
+      "id": "cfa_sauce",
+      "name": "Chick-fil-A Sauce",
+      "section": "Sauces",
+      "description": "Signature smoky, tangy dipping sauce.",
+      "prices": [{ "unit": "packet", "amount": 0.00 }],
+      "ingredients": ["mayonnaise base","mustard","barbecue flavor","sweeteners","spices"],
+      "allergens": ["soy","egg"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 140,
+      "image": null,
+      "notes": "Ingredients simplified for demo; verify locally."
+    },
+    {
+      "id": "polynesian_sauce",
+      "name": "Polynesian Sauce",
+      "section": "Sauces",
+      "description": "Sweet and tangy dipping sauce.",
+      "prices": [{ "unit": "packet", "amount": 0.00 }],
+      "ingredients": ["sugar","soybean oil","water","vinegar","tomato paste","spices","thickener"],
+      "allergens": ["soy"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 110,
+      "image": null,
+      "notes": "Verify allergens; grocery bottle lists soy."
+    },
+    {
+      "id": "frosted_lemonade",
+      "name": "Frosted Lemonade",
+      "section": "Desserts",
+      "description": "Vanilla Icedream blended with lemonade.",
+      "prices": [{ "unit": "small", "amount": 3.49 }],
+      "ingredients": ["lemonade","ice cream (milk)"],
+      "allergens": ["milk"],
+      "dietary_tags": [],
+      "spice": null,
+      "modifiers": [],
+      "add_ons": [],
+      "availability": { "days": ["Mon","Tue","Wed","Thu","Fri","Sat"], "times": "All day" },
+      "calories": 330,
+      "image": null,
+      "notes": ""
+    }
+  ]
+}
