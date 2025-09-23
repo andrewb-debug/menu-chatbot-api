@@ -2,63 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Menu Chat — {{ restaurant_name }}</title>
+  <title>Menu Chat — {{ restaurant_name.replace('_',' ')|replace('-',' ')|title }}</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Keep your existing look & feel: minimal, classic styles -->
   <style>
-    :root {
-      --bg: #fafafa;
-      --card: #ffffff;
-      --text: #111;
-      --muted: #666;
-      --accent: #2563eb;
-      --border: #e5e5e5;
-    }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: #f9fafb;
+      color: #111;
     }
-    .container {
-      max-width: 840px;
+    .wrap {
+      max-width: 900px;
       margin: 0 auto;
-      padding: 24px 16px 32px;
+      padding: 16px;
     }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.04);
-      overflow: hidden;
-    }
-    .header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
+    header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      padding: 12px 8px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
     .dot { width: 10px; height: 10px; border-radius: 50%; background: #16a34a; }
-    .title {
-      font-weight: 700; font-size: 18px;
-    }
-    .chat {
-      height: 60vh;
+    h1 { font-size: 18px; margin: 0; font-weight: 700; }
+    #chatBox {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      height: 65vh;
       overflow-y: auto;
-      padding: 18px 20px;
-      scroll-behavior: smooth;
+      padding: 12px;
+      margin-top: 12px;
     }
-    .msg {
-      margin: 12px 0;
-      line-height: 1.5;
-    }
-    .msg.user { text-align: right; }
+    .msg { margin: 8px 0; display: flex; }
+    .msg.user { justify-content: flex-end; }
     .bubble {
-      display: inline-block;
-      padding: 10px 12px;
-      border-radius: 12px;
       max-width: 85%;
-      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
       background: #f8fafc;
       white-space: pre-wrap;
       word-wrap: break-word;
@@ -69,71 +57,64 @@
     }
     .input-row {
       display: flex;
-      gap: 10px;
-      padding: 12px;
-      border-top: 1px solid var(--border);
-      background: #fff;
+      gap: 8px;
+      margin-top: 10px;
     }
     .input-row input {
       flex: 1;
       padding: 10px 12px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
       font-size: 15px;
+      background: #fff;
     }
     .btn {
-      background: var(--accent);
+      background: #2563eb;
       color: #fff;
-      border: 0;
+      border: none;
       padding: 10px 14px;
-      border-radius: 10px;
-      cursor: pointer;
+      border-radius: 8px;
       font-weight: 600;
+      cursor: pointer;
     }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* Render Markdown lists nicely inside bot bubbles */
+    /* OPTIONAL: tiny spacing so Markdown lists look tidy inside bot bubbles */
     .bubble ul, .bubble ol { margin: 0.25rem 0 0.25rem 1.25rem; }
     .bubble li { margin: 0.25rem 0; }
-    .bubble p { margin: 0.4rem 0; }
+    .bubble p { margin: 0.35rem 0; }
 
-    /* helper text */
-    .hint { color: var(--muted); font-size: 13px; margin-top: 6px; }
+    .hint { color: #6b7280; font-size: 13px; margin-top: 6px; }
   </style>
 
-  <!-- Markdown parser for pretty lists -->
+  <!-- Markdown parser (for bot replies only) -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <div class="header">
-        <span class="dot"></span>
-        <div class="title">Menu Chat — {{ restaurant_name }}</div>
-      </div>
+  <div class="wrap">
+    <header>
+      <span class="dot"></span>
+      <h1>Menu Chat — {{ restaurant_name.replace('_',' ')|replace('-',' ')|title }}</h1>
+    </header>
 
-      <div id="chatBox" class="chat"></div>
+    <div id="chatBox"></div>
 
-      <div class="input-row">
-        <input id="userInput" type="text" placeholder="Ask about items, allergens, prices…" />
-        <button id="sendBtn" class="btn">Send</button>
-      </div>
-      <div class="hint" style="padding: 0 12px 12px;">
-        Tip: Try “What sandwiches do you have?” or “Allergens in the Spicy Chicken Sandwich?”
-      </div>
+    <div class="input-row">
+      <input id="userInput" type="text" placeholder="Ask about items, allergens, prices…" />
+      <button id="sendBtn" class="btn">Send</button>
     </div>
+    <div class="hint">Tip: Try “What sandwiches do you have?” or “Allergens in the Spicy Chicken Sandwich?”</div>
   </div>
 
   <script>
-    const restaurant = "{{ restaurant_name }}";
+    const restaurantSlug = "{{ restaurant_name }}";
+    const restaurantPretty = "{{ restaurant_name.replace('_',' ')|replace('-',' ')|title }}";
     const chatBox = document.getElementById("chatBox");
     const userInput = document.getElementById("userInput");
     const sendBtn = document.getElementById("sendBtn");
 
-    // Initial bot message
-    appendMessage("bot",
-`👋 Hi, I’m your assistant for **${restaurant}**!
-Ask me about items, allergens, prices, or dietary options.`);
+    // Initial greeting
+    appendMessage("bot", `👋 Hi, I’m your assistant for **${restaurantPretty}**!\nAsk me about items, allergens, prices, or dietary options.`, true);
 
     sendBtn.addEventListener("click", sendMessage);
     userInput.addEventListener("keydown", (e) => {
@@ -148,7 +129,7 @@ Ask me about items, allergens, prices, or dietary options.`);
       setLoading(true);
 
       try {
-        const res = await fetch(`/chat?restaurant=${encodeURIComponent(restaurant)}`, {
+        const res = await fetch(`/chat?restaurant=${encodeURIComponent(restaurantSlug)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ message: text })
@@ -157,7 +138,7 @@ Ask me about items, allergens, prices, or dietary options.`);
         const reply = data.reply || "Sorry, I didn’t get a reply.";
         appendMessage("bot", reply, /*isMarkdown*/ true);
       } catch (err) {
-        appendMessage("bot", "Network error. Please try again.", false);
+        appendMessage("bot", "Network error. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -168,18 +149,21 @@ Ask me about items, allergens, prices, or dietary options.`);
       sendBtn.textContent = state ? "Sending…" : "Send";
     }
 
+    // Minimal change: render bot messages as Markdown; user stays plain text
     function appendMessage(sender, text, isMarkdown = false) {
-      const wrap = document.createElement("div");
-      wrap.className = `msg ${sender}`;
+      const row = document.createElement("div");
+      row.className = `msg ${sender}`;
       const bubble = document.createElement("div");
       bubble.className = "bubble";
+
       if (sender === "bot" && isMarkdown) {
         bubble.innerHTML = marked.parse(text);
       } else {
         bubble.textContent = text;
       }
-      wrap.appendChild(bubble);
-      chatBox.appendChild(wrap);
+
+      row.appendChild(bubble);
+      chatBox.appendChild(row);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
   </script>
